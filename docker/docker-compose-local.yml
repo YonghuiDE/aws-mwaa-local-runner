@@ -6,12 +6,15 @@ services:
             - POSTGRES_USER=airflow
             - POSTGRES_PASSWORD=airflow
             - POSTGRES_DB=airflow
+            # Himanshu added this so postgres will use container /tmp 
+            - PGDATA=/tmp
         logging:
             options:
                 max-size: 10m
                 max-file: "3"
-        volumes:
-            - "${PWD}/db-data:/var/lib/postgresql/data"
+        # Himanshu commented to avoid postgres not starting issue with pg_ctl error
+        #volumes:
+        #    - "${PWD}/db-data:/var/lib/postgresql/data"
 
     local-runner:
         image: amazon/mwaa-local:2.0.2
