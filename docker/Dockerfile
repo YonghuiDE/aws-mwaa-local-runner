@@ -2,6 +2,7 @@
 # AUTHOR: Subash Canapathy
 # DESCRIPTION: Amazon MWAA Local Dev Environment
 # BUILD: docker build --rm -t amazon/mwaa-local .
+# Himanshu Parmar commented and added lines for MWAA to run on Windows 10
 
 FROM public.ecr.aws/amazonlinux/amazonlinux
 LABEL maintainer="amazon"
@@ -15,13 +16,19 @@ ARG SYSTEM_DEPS=""
 ARG INDEX_URL=""
 ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 
+# Himanshu Added
+RUN yum install -y dos2unix
+
 COPY script/bootstrap.sh /bootstrap.sh
 COPY script/systemlibs.sh /systemlibs.sh
 COPY config/constraints.txt /constraints.txt
 COPY config/requirements.txt /requirements.txt
 
-RUN chmod u+x /systemlibs.sh && /systemlibs.sh
-RUN chmod u+x /bootstrap.sh && /bootstrap.sh
+# RUN chmod u+x /systemlibs.sh && /systemlibs.sh   # Himanshu commented original line
+RUN dos2unix /systemlibs.sh && chmod u+x /systemlibs.sh && /systemlibs.sh
+
+# RUN chmod u+x /bootstrap.sh && /bootstrap.sh   # Himanshu commented original line
+RUN dos2unix /bootstrap.sh && chmod u+x /bootstrap.sh && /bootstrap.sh
 
 # Post bootstrap to avoid expensive docker rebuilds
 COPY script/entrypoint.sh /entrypoint.sh
@@ -29,7 +36,8 @@ COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 COPY config/webserver_config.py ${AIRFLOW_USER_HOME}/webserver_config.py
 
 RUN chown -R airflow: ${AIRFLOW_USER_HOME}
-RUN chmod +x /entrypoint.sh
+# RUN chmod +x /entrypoint.sh  #Himanshu commented this original line
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 
 EXPOSE 8080 5555 8793
 
