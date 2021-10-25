@@ -53,6 +53,12 @@ Build the Docker container image using the following command:
 
 **Note**: it takes several minutes to build the Docker image locally.
 
+**Error**
+
+For error "docker build" error, failed to create LLB definition, need to change:
+1. change ./docker/Dockerfile to ./docker/dockerfile. The reason is wsl2 engine is of course case-sensitive. The command sent to docker from Visual Studio is specifying a fully lowercase path, which breaks the command of course.
+2. in docker desktop, change setting/Docker Engine/ "buildkit": true to "buildkit": false
+
 ### Step two: Running Apache Airflow
 
 Run Apache Airflow using one of the following database backends.
